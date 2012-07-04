@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012 Javier Ignacio Lecuona
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+		
+	<import resource="physicalPersonContext-Mysql.xml"/>
+	<import resource="userContext-Mysql.xml"/>
+	<import resource="dataEntryContext-Mysql.xml"/>
+	<import resource="legalPersonContext-Mysql.xml"/>
+	<import resource="cashierProviderContext-Mysql.xml"/>
+	<import resource="serviceProviderContext-Mysql.xml"/>
+	<import resource="subeCardContext-Mysql.xml"/>
+	
+	<bean id="mysqlConnectionProvider" class="com.sube.storage.JDBCConnectionProvider" factory-method="getInstance">
+		<property name="driverUrl" value="com.mysql.jdbc.Driver"/>
+		<property name="jdbcDatabaseUrl" value="jdbc:mysql://localhost/sube"/>
+		<property name="connectionProperties">
+			<props>
+				<prop key="user">root</prop>
+				<prop key="password"></prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="genericProxy" class="com.sube.daos.mysql.MysqlStatementProxy">
+		<property name="connection">
+			<bean factory-bean="mysqlConnectionProvider" factory-method="getConnection"/>
+		</property>
+		<property name="jdbcConnectionProvider" ref="mysqlConnectionProvider"/>
+	</bean>
+	
+	<bean id="genericUpdateProxy" class="com.sube.daos.mysql.MysqlUpdateStatementProxy">
+		<property name="connection">
+			<bean factory-bean="mysqlConnectionProvider" factory-method="getConnection"/>
+		</property>
+		<property name="jdbcConnectionProvider" ref="mysqlConnectionProvider"/>
+	</bean>
+	
+	<!-- DAOS -->
+	<bean id="legalPersonDao" class="com.sube.daos.mysql.LegalPersonMysqlDaoImpl">
+		<property name="createLegalPersonProxy" ref="createLegalPersonProxy"/>
+		<property name="getLegalPersonProxy" ref="getLegalPersonProxy"/>
+		<property name="modifyLegalPersonProxy" ref="modifyLegalPersonProxy"/>
+		<property name="deleteLegalPersonProxy" ref="deleteLegalPersonProxy"/>
+		<property name="getLegalPersonByNameProxy" ref="getLegalPersonByNameProxy"/>
+	</bean>
+	
+	<bean id="subeCardDao" class="com.sube.daos.mysql.SubeCardMysqlDaoImpl">
+		<property name="createCardProxy" ref="createCardProxy"/>
+		<property name="deleteCardProxy" ref="deleteCardProxy"/>
+		<property name="queryBalanceProxy" ref="queryBalanceProxy"/>
+		<property name="createUserlessCardProxy" ref="createUserlessCardProxy"/>
+		<property name="updateBalanceProxy" ref="updateBalanceProxy"/>
+		<property name="getSubeCardProxy" ref="getSubeCardProxy"/>
+	</bean>
+	
+	<bean id="subeCardUsageDao" class="com.sube.daos.mysql.SubeCardUsageMysqlDaoImpl">
+		<property name="genericChargeRefundProxy" ref="genericChargeRefundProxy"/>
+		<property name="subeCardDao" ref="subeCardDao"/>
+		<property name="cleanSubeCardProxy" ref="cleanSubeCardProxy"/>
+	</bean>
+	
+	<bean id="physicalPersonDao" class="com.sube.daos.mysql.PhysicalPersonMysqlDaoImpl">
+		<property name="getPhysicalPersonProxy" ref="getPhysicalPersonProxy"/>
+		<property name="createPhysicalPersonProxy" ref="createPhysicalPersonProxy"/>
+		<property name="getDocumentTypeIdProxy" ref="getDocumentTypeIdProxy"/>
+		<property name="getDocumentTypeProxy" ref="getDocumentTypeProxy"/>
+		<property name="getPhysicalPersonByIdNumberProxy" ref="getPhysicalPersonByIdNumberProxy"/>
+		<property name="modifyPhysicalPersonProxy" ref="modifyPhysicalPersonProxy"/>
+		<property name="deletePhysicalPersonProxy" ref="deletePhysicalPersonProxy"/>
+	</bean>
+	
+	<bean id="userDao" class="com.sube.daos.mysql.UserMysqlDaoImpl">
+		<property name="createUserProxy" ref="createUserProxy"/>
+		<property name="deleteUserProxy" ref="deleteUserProxy"/>
+		<property name="getUserProxy" ref="getUserProxy"/>
+		<property name="physicalPersonDao" ref="physicalPersonDao"/>
+	</bean>
+	
+	<bean id="cashierProviderDao" class="com.sube.daos.mysql.CashierProviderMysqlDaoImpl">
+		<property name="createCashierProviderProxy" ref="createCashierProviderProxy"/>
+		<property name="getCashierProviderProxy" ref="getCashierProviderProxy"/>
+		<property name="modifyCashierProviderProxy" ref="modifyCashierProviderProxy"/>
+		<property name="deleteCashierProviderProxy" ref="deleteCashierProviderProxy"/>
+		<property name="getCashierProviderByNameProxy" ref="getCashierProviderByNameProxy"/>
+		<property name="legalPersonDao" ref="legalPersonDao"/>
+	</bean>
+	
+	<bean id="serviceProviderDao" class="com.sube.daos.mysql.ServiceProviderMysqlDaoImpl">
+		<property name="createServiceProviderProxy" ref="createServiceProviderProxy"/>
+		<property name="getServiceProviderProxy" ref="getServiceProviderProxy"/>
+		<property name="modifyServiceProviderProxy" ref="modifyServiceProviderProxy"/>
+		<property name="deleteServiceProviderProxy" ref="deleteServiceProviderProxy"/>
+		<property name="getServiceProviderByNameProxy" ref="getServiceProviderByNameProxy"/>
+		<property name="legalPersonDao" ref="legalPersonDao"/>
+	</bean>
+	
+	<bean id="dataEntryDao" class="com.sube.daos.mysql.DataEntryMysqlDaoImpl">
+		<property name="createDataEntryProxy" ref="createDataEntryProxy"/>
+		<property name="modifyDataEntryProxy" ref="modifyDataEntryProxy"/>
+		<property name="deleteDataEntryProxy" ref="deleteDataEntryProxy"/>
+		<property name="getDataEntryProxy" ref="getDataEntryProxy"/>
+		<property name="getDataEntryByPasswordProxy" ref="getDataEntryByPasswordProxy"/>
+		<property name="physicalPersonDao" ref="physicalPersonDao"/>
+	</bean>
+	
+</beans>

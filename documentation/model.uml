@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_r2IWMLjoEeG3g8nK7nxAaA" name="model">
+  <packagedElement xmi:type="uml:Actor" xmi:id="_sr7VwLjoEeG3g8nK7nxAaA" name="Data Entry"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_tebwwLjoEeG3g8nK7nxAaA" name="Create User"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_2NxfcLjoEeG3g8nK7nxAaA" name="Modify User"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_6Mgl4LjoEeG3g8nK7nxAaA" name="Delete User"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_AtnicLjpEeG3g8nK7nxAaA" name="A_data entry_create user" memberEnd="_AtnicbjpEeG3g8nK7nxAaA _AtnidLjpEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_AtnicbjpEeG3g8nK7nxAaA" name="data entry" type="_sr7VwLjoEeG3g8nK7nxAaA" association="_AtnicLjpEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_AtnicrjpEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Atnic7jpEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_AtnidLjpEeG3g8nK7nxAaA" name="create user" type="_tebwwLjoEeG3g8nK7nxAaA" association="_AtnicLjpEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_AtnidbjpEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_AtnidrjpEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_Bb5kwLjpEeG3g8nK7nxAaA" name="A_data entry_modify user" memberEnd="_Bb5kwbjpEeG3g8nK7nxAaA _Bb5kxLjpEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_Bb5kwbjpEeG3g8nK7nxAaA" name="data entry" type="_sr7VwLjoEeG3g8nK7nxAaA" association="_Bb5kwLjpEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Bb5kwrjpEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Bb5kw7jpEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_Bb5kxLjpEeG3g8nK7nxAaA" name="modify user" type="_2NxfcLjoEeG3g8nK7nxAaA" association="_Bb5kwLjpEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Bb5kxbjpEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Bb5kxrjpEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_B9JQoLjpEeG3g8nK7nxAaA" name="A_data entry_delete user" memberEnd="_B9JQobjpEeG3g8nK7nxAaA _B9JQpLjpEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_B9JQobjpEeG3g8nK7nxAaA" name="data entry" type="_sr7VwLjoEeG3g8nK7nxAaA" association="_B9JQoLjpEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_B9JQorjpEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_B9JQo7jpEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_B9JQpLjpEeG3g8nK7nxAaA" name="delete user" type="_6Mgl4LjoEeG3g8nK7nxAaA" association="_B9JQoLjpEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_B9J3sLjpEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_B9J3sbjpEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_DGe3QLjpEeG3g8nK7nxAaA" name="Cashier Provider"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_L4OZsLjpEeG3g8nK7nxAaA" name="Charge Money"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_QeuDsLjpEeG3g8nK7nxAaA" name="Refund Money"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OGd9cLjqEeG3g8nK7nxAaA" name="A_cashier provider_charge money" memberEnd="_OGd9cbjqEeG3g8nK7nxAaA _OGd9dLjqEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_OGd9cbjqEeG3g8nK7nxAaA" name="cashier provider" type="_DGe3QLjpEeG3g8nK7nxAaA" association="_OGd9cLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OGd9crjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OGd9c7jqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_OGd9dLjqEeG3g8nK7nxAaA" name="charge money" type="_L4OZsLjpEeG3g8nK7nxAaA" association="_OGd9cLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OGd9dbjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OGd9drjqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_Oo0ckLjqEeG3g8nK7nxAaA" name="A_cashier provider_refund money" memberEnd="_Oo0ckbjqEeG3g8nK7nxAaA _Oo0clLjqEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_Oo0ckbjqEeG3g8nK7nxAaA" name="cashier provider" type="_DGe3QLjpEeG3g8nK7nxAaA" association="_Oo0ckLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Oo0ckrjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Oo0ck7jqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_Oo0clLjqEeG3g8nK7nxAaA" name="refund money" type="_QeuDsLjpEeG3g8nK7nxAaA" association="_Oo0ckLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Oo0clbjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Oo0clrjqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_PgRB8LjqEeG3g8nK7nxAaA" name="Service Provider"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_QruvgLjqEeG3g8nK7nxAaA" name="Withdraw Money"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_S0oVsLjqEeG3g8nK7nxAaA" name="Refund Money"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_WfCx8LjqEeG3g8nK7nxAaA" name="A_service provider_withdraw money" memberEnd="_WfCx8bjqEeG3g8nK7nxAaA _WfCx9LjqEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_WfCx8bjqEeG3g8nK7nxAaA" name="service provider" type="_PgRB8LjqEeG3g8nK7nxAaA" association="_WfCx8LjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WfCx8rjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WfCx87jqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_WfCx9LjqEeG3g8nK7nxAaA" name="withdraw money" type="_QruvgLjqEeG3g8nK7nxAaA" association="_WfCx8LjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WfCx9bjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WfCx9rjqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_XZ87ALjqEeG3g8nK7nxAaA" name="A_service provider_refund money" memberEnd="_XZ87AbjqEeG3g8nK7nxAaA _XZ87BLjqEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_XZ87AbjqEeG3g8nK7nxAaA" name="service provider" type="_PgRB8LjqEeG3g8nK7nxAaA" association="_XZ87ALjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_XZ87ArjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XZ87A7jqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_XZ87BLjqEeG3g8nK7nxAaA" name="refund money" type="_S0oVsLjqEeG3g8nK7nxAaA" association="_XZ87ALjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_XZ87BbjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XZ87BrjqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Actor" xmi:id="_Ypkv0LjqEeG3g8nK7nxAaA" name="Actor"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_aYNb4LjqEeG3g8nK7nxAaA" name="Query last services paid"/>
+  <packagedElement xmi:type="uml:UseCase" xmi:id="_loigoLjqEeG3g8nK7nxAaA" name="Query Balance"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_owZpcLjqEeG3g8nK7nxAaA" name="A_actor_query last services paid" memberEnd="_owZpcbjqEeG3g8nK7nxAaA _owZpdLjqEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_owZpcbjqEeG3g8nK7nxAaA" name="actor" type="_Ypkv0LjqEeG3g8nK7nxAaA" association="_owZpcLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_owZpcrjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_owZpc7jqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_owZpdLjqEeG3g8nK7nxAaA" name="query last services paid" type="_aYNb4LjqEeG3g8nK7nxAaA" association="_owZpcLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_owZpdbjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_owZpdrjqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_pPsNgLjqEeG3g8nK7nxAaA" name="A_actor_query balance" memberEnd="_pPsNgbjqEeG3g8nK7nxAaA _pPsNhLjqEeG3g8nK7nxAaA">
+    <ownedEnd xmi:id="_pPsNgbjqEeG3g8nK7nxAaA" name="actor" type="_Ypkv0LjqEeG3g8nK7nxAaA" association="_pPsNgLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_pPsNgrjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pPsNg7jqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_pPsNhLjqEeG3g8nK7nxAaA" name="query balance" type="_loigoLjqEeG3g8nK7nxAaA" association="_pPsNgLjqEeG3g8nK7nxAaA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_pPsNhbjqEeG3g8nK7nxAaA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pPsNhrjqEeG3g8nK7nxAaA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+</uml:Model>
