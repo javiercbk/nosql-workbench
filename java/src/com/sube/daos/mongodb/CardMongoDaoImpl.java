@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.sube.daos.mongodb;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -40,7 +42,9 @@ public class CardMongoDaoImpl implements CardDao {
 		collection.ensureIndex(new BasicDBObject("number", 1), new BasicDBObject("unique", true));
 		collection.ensureIndex(new BasicDBObject("user.docNum", 1));
 		collection.ensureIndex(new BasicDBObject("user.docNum", 1).append("user.docType", 1), new BasicDBObject("unique", true));
-		collection.insert(subeCardGenerator.generate(subeCard));
+		DBObject subeCardDBObject = subeCardGenerator.generate(subeCard);
+		collection.insert(subeCardDBObject);
+		subeCard.setMongoId((ObjectId) subeCardDBObject.get("_id"));
 	}
 
 	@Override

@@ -18,6 +18,8 @@ package com.sube.daos.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -110,6 +112,7 @@ public class CardUsagesMongoDaoImpl implements CardUsagesDao{
 		DBObject subeCardUsageDBObject = subeCardUsageGenerator.generate(cardUsage);
 		cardDao.addToBalance(cardUsage.getCard(), cardUsage.getMoney());
 		cardUsagesCollection.insert(subeCardUsageDBObject);
+		cardUsage.setMongoId((ObjectId) subeCardUsageDBObject.get("_id"));
 	}
 	
 	private DBCollection getCardUsagesCollection() {
@@ -137,4 +140,5 @@ public class CardUsagesMongoDaoImpl implements CardUsagesDao{
 	public void setCardDao(CardDao cardDao) {
 		this.cardDao = cardDao;
 	}
+	
 }

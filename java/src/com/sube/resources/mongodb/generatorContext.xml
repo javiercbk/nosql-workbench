@@ -28,7 +28,7 @@
 		<property name="db" ref="db"/>
 	</bean>
 	
-	<bean id="dateEntryRefGenerator" parent="genericRefGenerator">
+	<bean id="dataEntryRefGenerator" parent="genericRefGenerator">
 		<property name="collection" value="dataEntries"/>
 	</bean>
 	
@@ -39,6 +39,10 @@
 	<bean id="subeCardRefGenerator" parent="genericRefGenerator">
 		<property name="collection" value="cards"/>
 	</bean>
+	
+	<bean id="provideRefTypeGenerator" class="com.sube.daos.mongodb.generators.ProviderRefTypeGenerator">
+		<property name="collection" value="dataEntries"/>
+	</bean>
 
 	<bean id="cashierProviderGenerator" class="com.sube.daos.mongodb.generators.CashierProviderGenerator">
 		<property name="legalPersonGenerator" ref="legalPersonGenerator"/>
@@ -48,13 +52,18 @@
 		<property name="legalPersonGenerator" ref="legalPersonGenerator"/>
 	</bean>
 	
-	<bean id="subeCardGenerator" class="com.sube.daos.mongodb.generators.subeCardGenerator">
-		<property name="dateEntryRefGenerator" ref="dateEntryRefGenerator"/>
+	<bean id="providerGenerator" class="com.sube.daos.mongodb.generators.ProviderGenerator">
+		<property name="cashierProviderGenerator" ref="cashierProviderGenerator"/>
+		<property name="serviceProviderGenerator" ref="serviceProviderGenerator"/>
+	</bean>
+	
+	<bean id="subeCardGenerator" class="com.sube.daos.mongodb.generators.SubeCardGenerator">
+		<property name="dataEntryRefGenerator" ref="dataEntryRefGenerator"/>
 		<property name="userGenerator" ref="userGenerator"/>
 	</bean>
 	
-	<bean id="subeCardUsageGenerator" class="com.sube.daos.mongodb.generators.subeCardUsageGenerator">
+	<bean id="subeCardUsageGenerator" class="com.sube.daos.mongodb.generators.SubeCardUsageGenerator">
 		<property name="subeCardRefGenerator" ref="subeCardRefGenerator"/>
-		<property name="providerRefGenerator" ref="providerRefGenerator"/>
+		<property name="provideRefTypeGenerator" ref="provideRefTypeGenerator"/>
 	</bean>
 </beans>

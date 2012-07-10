@@ -15,18 +15,27 @@
  ******************************************************************************/
 package com.sube.daos.mongodb.generators;
 
+import org.bson.BSONObject;
+
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBRef;
+import com.sube.beans.MongoBean;
 
-public class GenericDBRefGenerator<T> implements DBRefGenerator<T> {
+public class GenericDBRefGenerator<T extends MongoBean> implements
+		DBRefGenerator<T> {
 	private DB db;
 	private String collection;
-	
+
 	@Override
 	public DBRef generateDBRef(T toGenerate) {
-		DBCollection dataEntries = db.getCollection(collection);
-		DBRef dbRef = new DBRef(db, dataEntries.findOne(toGenerate));
+		DBCollection dbCollection = db.getCollection(collection);
+		// { $ref : <collname>, $id : <idvalue>[, $db : <dbname>] }
+		BSONObject  dbRefObj = new BasicDBObject("$ref", dbCollection.getName())
+				.append("$id", toGenerate.getMongoId()).append("$db",
+						db.getName());
+		DBRef dbRef = new DBRef(db, dbRefObj);
 		return dbRef;
 	}
 

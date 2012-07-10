@@ -21,9 +21,8 @@ public class SubeCardValidatorImpl implements SubeCardValidator {
 
 	@Override
 	public boolean isValid(SubeCard subeCard) {
-		//Data Entry and User should have a better validation
-		if (subeCard.getBalance() < 0 || subeCard.getCreatedBy() == null
-				|| subeCard.getNumber() < 0 || subeCard.getUser() == null) {
+		//Batter validation required
+		if (subeCard.getBalance() < 0 || subeCard.getCreatedBy() == null) {
 			return false;
 		}
 		return true;

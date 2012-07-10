@@ -25,7 +25,7 @@ import com.sube.beans.SubeCardUsage;
 
 public class SubeCardUsageGenerator implements DBObjectGenerator<SubeCardUsage> {
 	private DBRefGenerator<SubeCard> subeCardRefGenerator;
-	private DBRefGenerator<Provider> providerRefGenerator;
+	private DBObjectGenerator<Provider> provideRefTypeGenerator;
 	
 	@Override
 	public DBObject generate(SubeCardUsage toGenerate) {
@@ -33,7 +33,7 @@ public class SubeCardUsageGenerator implements DBObjectGenerator<SubeCardUsage> 
 		ObjectId id = new ObjectId();
 		subeCardUsageDBObject.put("_id", id);
 		subeCardUsageDBObject.put("subeCard", subeCardRefGenerator.generateDBRef(toGenerate.getCard()));
-		subeCardUsageDBObject.put("provider", providerRefGenerator.generateDBRef(toGenerate.getPerformer()));
+		subeCardUsageDBObject.put("provider", provideRefTypeGenerator.generate(toGenerate.getPerformer()));
 		subeCardUsageDBObject.put("datetime", toGenerate.getDatetime());
 		subeCardUsageDBObject.put("money", toGenerate.getMoney());
 		return subeCardUsageDBObject;
@@ -44,8 +44,10 @@ public class SubeCardUsageGenerator implements DBObjectGenerator<SubeCardUsage> 
 		this.subeCardRefGenerator = subeCardRefGenerator;
 	}
 
-	public void setProviderRefGenerator(
-			DBRefGenerator<Provider> providerRefGenerator) {
-		this.providerRefGenerator = providerRefGenerator;
+	public void setProvideRefTypeGenerator(
+			DBObjectGenerator<Provider> provideRefTypeGenerator) {
+		this.provideRefTypeGenerator = provideRefTypeGenerator;
 	}
+	
+	
 }

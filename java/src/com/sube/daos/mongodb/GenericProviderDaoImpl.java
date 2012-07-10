@@ -18,10 +18,13 @@ package com.sube.daos.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.sube.beans.MongoCollection;
 import com.sube.beans.Provider;
 import com.sube.beans.ProviderStatus;
@@ -42,7 +45,9 @@ public class GenericProviderDaoImpl implements ProviderDao {
 		collection.ensureIndex(new BasicDBObject("legalPerson.legalName", 1), new BasicDBObject("unique", true));
 		collection.ensureIndex(new BasicDBObject("legalPerson.cuit", 1), new BasicDBObject("unique", true));
 		collection.ensureIndex(new BasicDBObject("legalPerson.fantasyName", 1));
-		collection.insert(providerGenerator.generate(provider));
+		DBObject providerDBObject = providerGenerator.generate(provider);
+		collection.insert(providerDBObject);
+		provider.setMongoId((ObjectId) providerDBObject.get("_id"));
 	}
 
 	@Override

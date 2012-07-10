@@ -21,17 +21,19 @@
 	<import resource="parserContext.xml"/>
 	<import resource="generatorContext.xml"/>
 
-	<bean id="db" class="com.sube.storage.MongoConnection">
+	<bean id="dbConfig" class="com.sube.storage.MongoConnection" >
 		<property name="mongo">
 			<bean class="com.mongodb.Mongo"/>
 		</property>
 		<property name="dbName" value="sube"/>
 	</bean>
 	
+	<bean id="db" factory-bean="dbConfig" factory-method="getDb"/>
+	
 	<bean id="subeCardValidator" class="com.sube.daos.mongodb.SubeCardValidatorImpl"/>
 	
 	<!-- DAOS -->
-	<bean id="genericDao">
+	<bean id="genericDao" abstract="true">
 		<property name="db" ref="db"/>
 	</bean>
 	
@@ -41,7 +43,6 @@
 	</bean>
 	
 	<bean id="cardUsagesDao" class="com.sube.daos.mongodb.CardUsagesMongoDaoImpl" parent="genericDao">
-		<property name="subeCardValidator" ref="subeCardValidator"/>
 		<property name="subeCardUsageGenerator" ref="subeCardUsageGenerator"/>
 		<property name="subeCardRefGenerator" ref="subeCardRefGenerator"/>
 		<property name="subeCardUsageParser" ref="subeCardUsageParser"/>

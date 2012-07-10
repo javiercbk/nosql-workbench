@@ -32,6 +32,7 @@ public class SubeCardGenerator implements DBObjectGenerator<SubeCard> {
 	public DBObject generate(SubeCard toGenerate) {
 		BasicDBObject subeCardDBObject = new BasicDBObject();
 		ObjectId id = new ObjectId();
+		createdBy = toGenerate.getCreatedBy();
 		subeCardDBObject.put("_id", id);
 		subeCardDBObject.put("balance", toGenerate.getBalance());
 		subeCardDBObject.put("number", toGenerate.getNumber());

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.sube.daos.mongodb;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -37,6 +39,7 @@ public class EntryDaoImpl implements EntryDao{
 		collection.ensureIndex(new BasicDBObject("docNum", 1));
 		collection.ensureIndex(new BasicDBObject("docNum", 1).append("docType", 1), new BasicDBObject("unique", true));
 		collection.insert(dataEntryDBObject);
+		dataEntry.setMongoId((ObjectId) dataEntryDBObject.get("_id"));
 	}
 
 	@Override
@@ -81,5 +84,10 @@ public class EntryDaoImpl implements EntryDao{
 	@Override
 	public void deleteDataEntry(DataEntry dataEntry) {
 		getCollection().find(getQuery(dataEntry)).remove();
+	}
+
+	public void setDataEntryGenerator(
+			DBObjectGenerator<DataEntry> dataEntryGenerator) {
+		this.dataEntryGenerator = dataEntryGenerator;
 	}
 }

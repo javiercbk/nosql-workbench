@@ -24,7 +24,7 @@ public enum MongoCollection {
 	MostTravelers("mostTravelers"),
 	MostExpenders("mostExpenders"),
 	MostProfitable("mostProfitable"),
-	MoreErrorProne("mostProfitable");
+	MoreErrorProne("moreErrorProne");
 	
 	public final String name;
 	
