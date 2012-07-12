@@ -27,8 +27,8 @@ public class DataEntryGenerator implements DBObjectGenerator<DataEntry> {
 	@Override
 	public DBObject generate(DataEntry toGenerate) {
 		BasicDBObject dataEntryDBObject = new BasicDBObject();
-		ObjectId id = new ObjectId();
-		dataEntryDBObject.put("_id", id);
+		//ObjectId id = new ObjectId();
+		//dataEntryDBObject.put("_id", id);
 		dataEntryDBObject.put("firstName", toGenerate.getPhysicalPerson().getFirstName());
 		dataEntryDBObject.put("lastName", toGenerate.getPhysicalPerson().getLastName());
 		dataEntryDBObject.put("docType", toGenerate.getPhysicalPerson().getDocumentType().type);

@@ -24,6 +24,7 @@ public class SubeCard implements MongoBean{
 	private DataEntry createdBy;
 	private User user;
 	private ObjectId mongoId;
+	private CardStatus status;
 	
 	public Long getNumber() {
 		return number;
@@ -54,5 +55,34 @@ public class SubeCard implements MongoBean{
 	}
 	public void setMongoId(ObjectId mongoId) {
 		this.mongoId = mongoId;
+	}
+	public CardStatus getStatus() {
+		return status;
+	}
+	public void setStatus(CardStatus status) {
+		this.status = status;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((number == null) ? 0 : number.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SubeCard other = (SubeCard) obj;
+		if (number == null) {
+			if (other.number != null)
+				return false;
+		} else if (!number.equals(other.number))
+			return false;
+		return true;
 	}
 }

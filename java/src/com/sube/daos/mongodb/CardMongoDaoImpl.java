@@ -15,22 +15,29 @@
  ******************************************************************************/
 package com.sube.daos.mongodb;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.sube.beans.CardStatus;
 import com.sube.beans.MongoCollection;
 import com.sube.beans.SubeCard;
 import com.sube.daos.mongodb.generators.DBObjectGenerator;
+import com.sube.daos.mongodb.parsers.DBObjectParser;
 import com.sube.exceptions.card.InvalidSubeCardException;
 
 public class CardMongoDaoImpl implements CardDao {
 	private DB db;
 	private SubeCardValidator subeCardValidator;
 	private DBObjectGenerator<SubeCard> subeCardGenerator;
+	private DBObjectParser<SubeCard> subeCardParser;
 
 	@Override
 	public void storeSubeCard(SubeCard subeCard)
@@ -73,16 +80,34 @@ public class CardMongoDaoImpl implements CardDao {
 		DBCollection collection = getCardCollection();
 		BasicDBObject query = getCardQuery(subeCard);
 		Double balance = getBalanceByQuery(query);
-		BasicDBObject update = new BasicDBObject();
 		Double newBalance = balance.doubleValue() + money;
-		update.put("balance", newBalance);
-		collection.findAndModify(query, update);
+		BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("balance", newBalance));
+		collection.update(query, update);
 		return newBalance;
 	}
 
 	@Override
 	public Double getBalance(SubeCard subeCard) throws InvalidSubeCardException {
 		return getBalanceByQuery(getCardQuery(subeCard));
+	}
+	
+	@Override
+	public List<SubeCard> getCards(SubeCard subeCard) throws InvalidSubeCardException {
+		DBCollection collection = getCardCollection();
+		DBCursor cursor = collection.find(getCardQuery(subeCard));
+		Iterator<DBObject> iterator = cursor.iterator();
+		List<SubeCard> cards = new ArrayList<SubeCard>();
+		while(iterator.hasNext()){
+			DBObject dbObject = iterator.next();
+			cards.add(subeCardParser.parse(dbObject));
+		}
+		return cards;
+	}
+	
+	@Override
+	public void removeAll() {
+		DBCollection collection = getCardCollection();
+		collection.remove(new BasicDBObject());
 	}
 	
 	private Double getBalanceByQuery(DBObject query){
@@ -94,8 +119,7 @@ public class CardMongoDaoImpl implements CardDao {
 	private void markAs(SubeCard subeCard, String status){
 		DBCollection collection = getCardCollection();
 		BasicDBObject query = getCardQuery(subeCard);
-		BasicDBObject update = new BasicDBObject();
-		update.put("status", status);
+		BasicDBObject update = new BasicDBObject("$set", new BasicDBObject("status", status));
 		collection.findAndModify(query, update);
 	}
 
@@ -124,5 +148,9 @@ public class CardMongoDaoImpl implements CardDao {
 
 	public void setSubeCardValidator(SubeCardValidator subeCardValidator) {
 		this.subeCardValidator = subeCardValidator;
+	}
+
+	public void setSubeCardParser(DBObjectParser<SubeCard> subeCardParser) {
+		this.subeCardParser = subeCardParser;
 	}
 }

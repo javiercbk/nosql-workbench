@@ -78,6 +78,12 @@ public class GenericProviderDaoImpl implements ProviderDao {
 		return providers;
 	}
 	
+	@Override
+	public void removeAll() {
+		DBCollection collection = getProvidersCollection();
+		collection.remove(new BasicDBObject());
+	}
+	
 	private void markAs(Provider provider, String status){
 		DBCollection collection = getProvidersCollection();
 		BasicDBObject query = getProviderQuery(provider);

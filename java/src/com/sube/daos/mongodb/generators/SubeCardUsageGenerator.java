@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.sube.daos.mongodb.generators;
 
-import org.bson.types.ObjectId;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.sube.beans.Provider;
@@ -30,8 +28,6 @@ public class SubeCardUsageGenerator implements DBObjectGenerator<SubeCardUsage> 
 	@Override
 	public DBObject generate(SubeCardUsage toGenerate) {
 		BasicDBObject subeCardUsageDBObject = new BasicDBObject();
-		ObjectId id = new ObjectId();
-		subeCardUsageDBObject.put("_id", id);
 		subeCardUsageDBObject.put("subeCard", subeCardRefGenerator.generateDBRef(toGenerate.getCard()));
 		subeCardUsageDBObject.put("provider", provideRefTypeGenerator.generate(toGenerate.getPerformer()));
 		subeCardUsageDBObject.put("datetime", toGenerate.getDatetime());

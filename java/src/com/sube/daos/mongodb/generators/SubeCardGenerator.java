@@ -26,18 +26,16 @@ import com.sube.beans.User;
 public class SubeCardGenerator implements DBObjectGenerator<SubeCard> {
 	private DBRefGenerator<DataEntry> dataEntryRefGenerator;
 	private DBObjectGenerator<User> userGenerator;
-	private DataEntry createdBy;
 
 	@Override
 	public DBObject generate(SubeCard toGenerate) {
 		BasicDBObject subeCardDBObject = new BasicDBObject();
-		ObjectId id = new ObjectId();
-		createdBy = toGenerate.getCreatedBy();
-		subeCardDBObject.put("_id", id);
+		//ObjectId id = new ObjectId();
+		//subeCardDBObject.put("_id", id);
 		subeCardDBObject.put("balance", toGenerate.getBalance());
 		subeCardDBObject.put("number", toGenerate.getNumber());
 		subeCardDBObject.put("user", userGenerator.generate(toGenerate.getUser()));
-		subeCardDBObject.put("dataEntry", dataEntryRefGenerator.generateDBRef(createdBy));
+		subeCardDBObject.put("dataEntry", dataEntryRefGenerator.generateDBRef(toGenerate.getCreatedBy()));
 		return subeCardDBObject;
 	}
 
@@ -47,9 +45,5 @@ public class SubeCardGenerator implements DBObjectGenerator<SubeCard> {
 
 	public void setUserGenerator(DBObjectGenerator<User> userGenerator) {
 		this.userGenerator = userGenerator;
-	}
-
-	public void setCreatedBy(DataEntry createdBy) {
-		this.createdBy = createdBy;
 	}
 }

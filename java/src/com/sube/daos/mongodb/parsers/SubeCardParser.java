@@ -19,6 +19,7 @@ import org.bson.types.ObjectId;
 
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
+import com.sube.beans.CardStatus;
 import com.sube.beans.DataEntry;
 import com.sube.beans.SubeCard;
 import com.sube.beans.User;
@@ -35,6 +36,9 @@ public class SubeCardParser implements DBObjectParser<SubeCard> {
 		subeCard.setNumber((Long) toParse.get("number"));
 		subeCard.setCreatedBy(dataEntryParser.parse(((DBRef)toParse.get("dataEntry")).fetch()));
 		subeCard.setUser(userParser.parse((DBObject)toParse.get("user")));
+		if(toParse.get("status") != null){
+			subeCard.setStatus(CardStatus.getStatus(toParse.get("status").toString()));
+		}
 		subeCard.getUser().setSubeCard(subeCard);
 		return subeCard;
 	}

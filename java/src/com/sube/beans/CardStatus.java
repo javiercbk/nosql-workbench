@@ -18,8 +18,8 @@ package com.sube.beans;
 public enum CardStatus {
 	ACTIVE("active"),
 	STOLEN("stolen"),
-	LOST("stolen"),
-	DELETED("stolen");
+	LOST("lost"),
+	DELETED("deleted");
 	
 	public final String status;
 	

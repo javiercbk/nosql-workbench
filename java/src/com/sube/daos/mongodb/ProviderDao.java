@@ -25,4 +25,5 @@ public interface ProviderDao {
 	public void markInactive(Provider provider) throws InvalidProviderException;
 	public void markActive(Provider provider) throws InvalidProviderException;
 	public List<Provider> getProviderByName(String name, int limit);
+	public void removeAll();
 }

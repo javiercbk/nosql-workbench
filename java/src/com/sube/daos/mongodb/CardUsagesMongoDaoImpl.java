@@ -102,6 +102,12 @@ public class CardUsagesMongoDaoImpl implements CardUsagesDao{
 		}
 		return subeCardUsages;
 	}
+	
+	@Override
+	public void removeAll() {
+		DBCollection collection = getCardUsagesCollection();
+		collection.remove(new BasicDBObject());
+	}
 
 	private void genericUsageInsertion(SubeCardUsage cardUsage) throws InvalidSubeCardException {
 		DBCollection cardUsagesCollection = getCardUsagesCollection();

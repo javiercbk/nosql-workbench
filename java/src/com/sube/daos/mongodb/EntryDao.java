@@ -23,4 +23,5 @@ public interface EntryDao {
 	public void markDeleted(DataEntry dataEntry) throws InvalidDataEntryException;
 	public void markActive(DataEntry dataEntry) throws InvalidDataEntryException;
 	public void deleteDataEntry(DataEntry dataEntry);
+	public void removeAll();
 }

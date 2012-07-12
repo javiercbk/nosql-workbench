@@ -54,6 +54,12 @@ public class EntryDaoImpl implements EntryDao{
 		markAs(dataEntry, PhysicalPersonStatus.Active.status);
 	}
 	
+	@Override
+	public void removeAll() {
+		DBCollection collection = getCollection();
+		collection.remove(new BasicDBObject());
+	}
+	
 	private void markAs(DataEntry dataEntry, String status) {
 		DBObject query = getQuery(dataEntry);
 		DBCollection collection = getCollection();

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.sube.daos.mongodb;
 
+import java.util.List;
+
 import com.sube.beans.SubeCard;
 import com.sube.exceptions.card.InvalidSubeCardException;
 
@@ -26,4 +28,6 @@ public interface CardDao {
 	public void markActive(SubeCard subeCard) throws InvalidSubeCardException;
 	public Double addToBalance(SubeCard subeCard, Double money) throws InvalidSubeCardException;
 	public Double getBalance(SubeCard subeCard) throws InvalidSubeCardException;
+	public List<SubeCard> getCards(SubeCard subeCard) throws InvalidSubeCardException;
+	public void removeAll();
 }

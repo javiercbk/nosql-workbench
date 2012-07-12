@@ -40,6 +40,7 @@
 	<bean id="cardDao" class="com.sube.daos.mongodb.CardMongoDaoImpl" parent="genericDao">
 		<property name="subeCardValidator" ref="subeCardValidator"/>
 		<property name="subeCardGenerator" ref="subeCardGenerator"/>
+		<property name="subeCardParser" ref="subeCardParser"/>
 	</bean>
 	
 	<bean id="cardUsagesDao" class="com.sube.daos.mongodb.CardUsagesMongoDaoImpl" parent="genericDao">
