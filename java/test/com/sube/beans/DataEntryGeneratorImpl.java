@@ -16,6 +16,7 @@
 package com.sube.beans;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 import com.sube.utils.PasswordEncoder;
 
@@ -27,7 +28,7 @@ public class DataEntryGeneratorImpl implements DataEntryTestDataGenerator {
 		DataEntry dataEntry = new DataEntry();
 		dataEntry.setPhysicalPerson(physicalPerson);
 		try {
-			dataEntry.setPassword(passwordEncoder.encodePassword("checreto"));
+			dataEntry.setPassword(passwordEncoder.encodePassword(UUID.randomUUID().toString()));
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

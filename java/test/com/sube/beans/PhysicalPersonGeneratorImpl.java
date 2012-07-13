@@ -15,15 +15,18 @@
  ******************************************************************************/
 package com.sube.beans;
 
+import java.util.Random;
+import java.util.UUID;
+
 public class PhysicalPersonGeneratorImpl implements PhysicalPersonTestDataGenerator {
 
 	@Override
 	public PhysicalPerson generatePhysicalPerson() {
 		PhysicalPerson physicalPerson = new PhysicalPerson();
 		physicalPerson.setDocumentType(DocumentType.DNI);
-		physicalPerson.setFirstName("Hetor");
-		physicalPerson.setLastName("Lopez");
-		physicalPerson.setIdNumber(12345678);
+		physicalPerson.setFirstName(UUID.randomUUID().toString());
+		physicalPerson.setLastName(UUID.randomUUID().toString());
+		physicalPerson.setIdNumber(new Random().nextInt());
 		return physicalPerson;
 	}
 

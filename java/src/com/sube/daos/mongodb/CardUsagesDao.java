@@ -28,5 +28,7 @@ public interface CardUsagesDao {
 	public void chargeMoney(SubeCardUsage cardUsage) throws InvalidSubeCardException, InvalidProviderException;
 	public void refundMoney(SubeCardUsage cardUsage) throws InvalidSubeCardException, InvalidProviderException;
 	public List<SubeCardUsage> listLastUsage(SubeCard subeCard, int limit) throws InvalidSubeCardException;
+	//only for testing purposes
 	public void removeAll();
+	public Integer count();
 }

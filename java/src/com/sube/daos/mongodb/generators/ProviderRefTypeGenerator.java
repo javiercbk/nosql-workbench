@@ -23,23 +23,16 @@ import com.mongodb.DBRef;
 import com.sube.beans.Provider;
 
 public class ProviderRefTypeGenerator implements DBObjectGenerator<Provider>{
-	private DB db;
-	private String collection;
+	private GenericDBRefGenerator<Provider> generator;
 
 	@Override
 	public DBObject generate(Provider toGenerate) {
-		DBCollection providers = db.getCollection(collection);
-		//FIXME poner un generador
-		DBRef dbRef = new DBRef(db, providers.findOne(toGenerate));
-		DBObject dbObject = new BasicDBObject("type", toGenerate.getProviderType().typeName).append("ref", dbRef);
+		DBRef dbRef = generator.generateDBRef(toGenerate);
+		DBObject dbObject = new BasicDBObject("type", toGenerate.getProviderType().name()).append("ref", dbRef);
 		return dbObject;
 	}
 
-	public void setDb(DB db) {
-		this.db = db;
-	}
-
-	public void setCollection(String collection) {
-		this.collection = collection;
+	public void setGenerator(GenericDBRefGenerator<Provider> generator) {
+		this.generator = generator;
 	}
 }

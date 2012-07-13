@@ -41,8 +41,7 @@
 	</bean>
 	
 	<bean id="provideRefTypeGenerator" class="com.sube.daos.mongodb.generators.ProviderRefTypeGenerator">
-		<property name="collection" value="providers"/>
-		<property name="db" ref="db"/>
+		<property name="generator" ref="providerRefGenerator"/>
 	</bean>
 
 	<bean id="cashierProviderGenerator" class="com.sube.daos.mongodb.generators.CashierProviderGenerator">

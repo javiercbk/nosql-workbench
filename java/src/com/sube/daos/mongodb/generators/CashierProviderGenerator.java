@@ -29,8 +29,6 @@ public class CashierProviderGenerator implements
 	@Override
 	public DBObject generate(CashierProvider toGenerate) {
 		BasicDBObject cashierProviderDBObject = new BasicDBObject();
-		ObjectId id = new ObjectId();
-		cashierProviderDBObject.put("_id", id);
 		cashierProviderDBObject.put("location", toGenerate.getLocation());
 		cashierProviderDBObject.put("providerType", toGenerate.getProviderType().typeName);
 		cashierProviderDBObject.put("providerName", toGenerate.getCashierName());

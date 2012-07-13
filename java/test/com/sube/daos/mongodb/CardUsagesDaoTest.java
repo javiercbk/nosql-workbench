@@ -1,6 +1,7 @@
 package com.sube.daos.mongodb;
 
 import java.util.Date;
+import java.util.Random;
 
 import junit.framework.TestCase;
 
@@ -92,13 +93,36 @@ public class CardUsagesDaoTest extends TestCase{
 		chargeMoney.setPerformer(cashierProvider);
 		chargeMoney.setCard(subeCard);
 		cardUsagesDao.chargeMoney(chargeMoney);
+		Double balance = cardMongoDao.getBalance(subeCard);
+		assertEquals("Balance should match", Double.valueOf(1.5d), balance);
 		SubeCardUsage chargeService = new SubeCardUsage();
 		chargeService.setCard(subeCard);
 		chargeService.setDatetime(new Date());
-		chargeService.setMoney(1.5d);
-		chargeService.setPerformer(cashierProvider);
+		chargeService.setMoney(-1.5d);
+		chargeService.setPerformer(serviceProvider);
 		chargeService.setCard(subeCard);
 		cardUsagesDao.chargeService(chargeService);
+		balance = cardMongoDao.getBalance(subeCard);
+		assertEquals("Balance should match", Double.valueOf(0), balance);
+		SubeCardUsage refundService = new SubeCardUsage();
+		refundService.setCard(subeCard);
+		refundService.setDatetime(new Date());
+		refundService.setMoney(1.5d);
+		refundService.setPerformer(serviceProvider);
+		refundService.setCard(subeCard);
+		cardUsagesDao.refundService(refundService);
+		balance = cardMongoDao.getBalance(subeCard);
+		assertEquals("Balance should match", Double.valueOf(1.5d), balance);
+		SubeCardUsage refundMoney = new SubeCardUsage();
+		refundMoney.setCard(subeCard);
+		refundMoney.setDatetime(new Date());
+		refundMoney.setMoney(-1.5d);
+		refundMoney.setPerformer(cashierProvider);
+		refundMoney.setCard(subeCard);
+		cardUsagesDao.refundMoney(refundMoney);
+		balance = cardMongoDao.getBalance(subeCard);
+		assertEquals("Balance should match", Double.valueOf(0), balance);
+		assertEquals("Count should match", Integer.valueOf(4), cardUsagesDao.count());
 	}
 	
 	@After

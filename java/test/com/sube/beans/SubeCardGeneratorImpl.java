@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.sube.beans;
 
+import java.util.Random;
+
 public class SubeCardGeneratorImpl implements SubeCardTestDataGenerator {
 
 	@Override
@@ -23,7 +25,7 @@ public class SubeCardGeneratorImpl implements SubeCardTestDataGenerator {
 		subeCard.setBalance(Double.valueOf(0.0d));
 		subeCard.setCreatedBy(dataEntry);
 		//Make autoincrement
-		subeCard.setNumber(219836123l);
+		subeCard.setNumber(new Random().nextLong());
 		return subeCard;
 	}
 

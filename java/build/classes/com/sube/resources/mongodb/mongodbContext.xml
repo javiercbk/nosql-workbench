@@ -47,6 +47,7 @@
 		<property name="subeCardUsageGenerator" ref="subeCardUsageGenerator"/>
 		<property name="subeCardRefGenerator" ref="subeCardRefGenerator"/>
 		<property name="subeCardUsageParser" ref="subeCardUsageParser"/>
+		<property name="cardDao" ref="cardDao"/>
 	</bean>
 	
 	<bean id="providerDao" class="com.sube.daos.mongodb.GenericProviderDaoImpl" parent="genericDao">
@@ -56,6 +57,11 @@
 	
 	<bean id="entryDao" class="com.sube.daos.mongodb.EntryDaoImpl" parent="genericDao">
 		<property name="dataEntryGenerator" ref="dataEntryGenerator"/>
+	</bean>
+	
+	<bean id="statisticDao" class="com.sube.daos.mongodb.StatisticDaoMongoImpl" parent="genericDao">
+		<property name="subeCardParser" ref="subeCardParser"/>
+		<property name="providerParser" ref="providerParser"/>
 	</bean>
 
 </beans>

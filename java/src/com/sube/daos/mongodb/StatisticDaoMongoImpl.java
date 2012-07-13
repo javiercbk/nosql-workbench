@@ -109,22 +109,22 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 		map.append("emit(this.provider.ref,{money:this.money});");
 		map.append("}");
 		StringBuffer reduce = new StringBuffer("function(key, values) {");
-		reduce.append("var result = 0");
+		reduce.append("var result = 0;");
 		reduce.append("values.forEach(function(value) {");
 		reduce.append("result += value.money;");
 		reduce.append("});");
 		reduce.append("return result;");
 		reduce.append("}");
-		BasicDBObject cashierPositive = new BasicDBObject("this.provider.type", ProviderType.CashierProvider.name());
+		BasicDBObject cashierPositive = new BasicDBObject("provider.type", ProviderType.CashierProvider.name());
 		cashierPositive.append("money", new BasicDBObject("$gt", 0));
 		DBObject andCashierPositive = new BasicDBObject("$and", cashierPositive);
-		BasicDBObject serviceNegative = new BasicDBObject("this.provider.type", ProviderType.ServiceProvider.name());
+		BasicDBObject serviceNegative = new BasicDBObject("provider.type", ProviderType.ServiceProvider.name());
 		serviceNegative.append("money", new BasicDBObject("$lt", 0));
 		DBObject andServiceNegative = new BasicDBObject("$and", serviceNegative);
 		DBObject query = new BasicDBObject().append("$or", andCashierPositive).append("$or", andServiceNegative);
 		MapReduceCommand mapReduce = new MapReduceCommand(
 				getCardUsagesCollection(), map.toString(), reduce.toString(),
-				MongoCollection.MostExpenders.name, OutputType.REPLACE, query);
+				MongoCollection.MostProfitable.name, OutputType.REPLACE, query);
 		getCardUsagesCollection().mapReduce(mapReduce);
 		DBCursor dbCursor = getMostProfitableCollection().find().sort(new BasicDBObject("value", -1)).limit(limit);
 		return parseProviderResult(dbCursor);
@@ -136,22 +136,22 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 		map.append("emit(this.provider.ref,{money:this.money});");
 		map.append("}");
 		StringBuffer reduce = new StringBuffer("function(key, values) {");
-		reduce.append("var result = 0");
+		reduce.append("var result = 0;");
 		reduce.append("values.forEach(function(value) {");
 		reduce.append("result += value.money;");
 		reduce.append("});");
 		reduce.append("return result;");
 		reduce.append("}");
-		BasicDBObject cashierPositive = new BasicDBObject("this.provider.type", ProviderType.CashierProvider.name());
-		cashierPositive.append("money", new BasicDBObject("$lt", 0));
-		DBObject andCashierPositive = new BasicDBObject("$and", cashierPositive);
-		BasicDBObject serviceNegative = new BasicDBObject("this.provider.type", ProviderType.ServiceProvider.name());
-		serviceNegative.append("money", new BasicDBObject("$gt", 0));
-		DBObject andServiceNegative = new BasicDBObject("$and", serviceNegative);
-		DBObject query = new BasicDBObject().append("$or", andCashierPositive).append("$or", andServiceNegative);
+		DBObject[] andCashierPositiveArray = {new BasicDBObject("provider.type", ProviderType.CashierProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))};
+		DBObject andCashierPositive = new BasicDBObject("$and", andCashierPositiveArray);
+		DBObject[] andServiceNegativeArray = {new BasicDBObject("provider.type", ProviderType.ServiceProvider.name()), new BasicDBObject("money", new BasicDBObject("$gt", 0))}; 
+		DBObject andServiceNegative = new BasicDBObject("$and", andServiceNegativeArray);
+		DBObject[] orQuery = {andCashierPositive, andServiceNegative};
+		DBObject query = new BasicDBObject("$or", orQuery);
+		System.out.println("//query\n"+query.toString());
 		MapReduceCommand mapReduce = new MapReduceCommand(
 				getCardUsagesCollection(), map.toString(), reduce.toString(),
-				MongoCollection.MostExpenders.name, OutputType.REPLACE, query);
+				MongoCollection.MoreErrorProne.name, OutputType.REPLACE, query);
 		getCardUsagesCollection().mapReduce(mapReduce);
 		DBCursor dbCursor = getMoreErrorProneCollection().find().sort(new BasicDBObject("value", -1)).limit(limit);
 		return parseProviderResult(dbCursor);
@@ -172,8 +172,7 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 		List<SubeCard> subeCardResults = new ArrayList<SubeCard>(); 
 		while(dbCursor.hasNext()){
 			DBObject next = dbCursor.next();
-			ObjectId subeCardId = (ObjectId) next.get("_id");
-			DBRef subeCardRef = new DBRef(db, new BasicDBObject("$ref",MongoCollection.Cards.name).append("$id", subeCardId));
+			DBRef subeCardRef= (DBRef) (next.get("_id"));
 			subeCardResults.add(subeCardParser.parse(subeCardRef.fetch()));
 		}
 		return subeCardResults;
@@ -183,8 +182,7 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 		List<Provider> providersResults = new ArrayList<Provider>(); 
 		while(dbCursor.hasNext()){
 			DBObject next = dbCursor.next();
-			ObjectId providerId = (ObjectId) next.get("_id");
-			DBRef providerRef = new DBRef(db, new BasicDBObject("$ref",MongoCollection.Providers.name).append("$id", providerId));
+			DBRef providerRef= (DBRef) (next.get("_id"));
 			providersResults.add(providerParser.parse(providerRef.fetch()));
 		}
 		return providersResults;
