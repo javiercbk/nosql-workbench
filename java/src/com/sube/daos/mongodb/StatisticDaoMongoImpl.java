@@ -144,7 +144,7 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 		while(dbCursor.hasNext()){
 			DBObject next = dbCursor.next();
 			Date date = (Date) next.get("_id");
-			Long usages = (Long) next.get("value");
+			Long usages = ((Double) next.get("value")).longValue();
 			usagesByDates.add(new SimpleEntry<Date,Long>(date, usages));
 		}
 		return usagesByDates;
