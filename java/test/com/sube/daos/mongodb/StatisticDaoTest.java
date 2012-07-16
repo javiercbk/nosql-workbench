@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.sube.daos.mongodb;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -109,6 +110,8 @@ public class StatisticDaoTest extends TestCase {
 	private Random random;
 	private Map<Date, Long> usages1;
 	private Map<Date, Long> usages2;
+	private Map<SubeCard, Long> travels;
+	private Map<SubeCard, Double> expended;
 
 	@Before
 	public void setUp() throws Exception {
@@ -127,17 +130,22 @@ public class StatisticDaoTest extends TestCase {
 
 	@Test
 	public void testStatistics() {
-		Provider provider = getMaxRefunds();
-		Provider moreErrorProne = statisticDao.getMoreErrorProne(1).get(0);
-		assertEquals("Provider should be the same", provider, moreErrorProne);
-		provider = getMostUsed();
-		Provider mostProfitable = statisticDao.getMostProfitable(1).get(0);
-		assertEquals("Provider should be the same", provider, mostProfitable);
+		Double amount = getMaxRefunds();
+		Entry<Provider,Double> moreErrorProne = statisticDao.getMoreErrorProne(1).get(0);
+		assertEquals("Money should be the same", roundTwoDecimals(amount), roundTwoDecimals(moreErrorProne.getValue()));
+		amount = getMostUsed();
+		Entry<Provider,Double> mostProfitable = statisticDao.getMostProfitable(1).get(0);
+		assertEquals("Money should be the same", roundTwoDecimals(amount), roundTwoDecimals(mostProfitable.getValue()));
 		List<Entry<Date, Long>> usagesByDates = statisticDao.getUsagesByDates(TO_DIFF, TO);
-		assertEquals("Elements Count must match", usages1.size(), usagesByDates.size());
 		assertAllElementsMatch(usagesByDates, usages1);
 		usagesByDates= statisticDao.getUsagesByDates(FROM, FROM_DIFF);
 		assertAllElementsMatch(usagesByDates, usages2);
+		Long mostTraveler = getMostTraveler();
+		Entry<SubeCard, Long> result = statisticDao.getMostTravelers(1).get(0);
+		assertEquals("Travels should be the same", mostTraveler, result.getValue());
+		Double mostExpender = getMostExpender();
+		Entry<SubeCard, Double> resultMoney = statisticDao.getMostExpenders(1).get(0);
+		assertEquals("Money should be the same", roundTwoDecimals(mostExpender), roundTwoDecimals(resultMoney.getValue()));
 	}
 
 	private void assertAllElementsMatch(List<Entry<Date, Long>> usagesByDates, Map<Date,Long> usagesMap) {
@@ -155,7 +163,7 @@ public class StatisticDaoTest extends TestCase {
 		cardUsagesDao.removeAll();
 	}
 
-	private Provider getMaxRefunds() {
+	private Double getMaxRefunds() {
 		Entry<Provider, Double> maxRefunder = null;
 		for (Entry<Provider, Double> entry : refunds.entrySet()) {
 			if (maxRefunder == null
@@ -164,10 +172,10 @@ public class StatisticDaoTest extends TestCase {
 				maxRefunder = entry;
 			}
 		}
-		return maxRefunder.getKey();
+		return maxRefunder.getValue();
 	}
 
-	private Provider getMostUsed() {
+	private Double getMostUsed() {
 		Entry<Provider, Double> mostUsed = null;
 		for (Entry<Provider, Double> entry : usages.entrySet()) {
 			if (mostUsed == null
@@ -176,7 +184,27 @@ public class StatisticDaoTest extends TestCase {
 				mostUsed = entry;
 			}
 		}
-		return mostUsed.getKey();
+		return mostUsed.getValue();
+	}
+	
+	private Long getMostTraveler() {
+		Long current = Long.valueOf(-1l);
+		for(Entry<SubeCard, Long> entry : travels.entrySet()){
+			if(entry.getValue() > current){
+				current = entry.getValue();
+			}
+		}
+		return current;
+	}
+	
+	private Double getMostExpender(){
+		Double current = null;
+		for(Entry<SubeCard, Double> entry : expended.entrySet()){
+			if(current == null || entry.getValue() > current){
+				current = entry.getValue();
+			}
+		}
+		return current;
 	}
 
 	private void generateUsages() throws InvalidSubeCardException,
@@ -206,6 +234,7 @@ public class StatisticDaoTest extends TestCase {
 				usages2.put(randomDate, count);
 			}
 			if (random.nextInt() % 2 == 0) {
+				//Charge Money
 				usage.setMoney((random.nextDouble() + 0.1d) * MONEY_LAMBDA); // 3.1
 																				// max,
 																				// min
@@ -213,21 +242,40 @@ public class StatisticDaoTest extends TestCase {
 				usage.setPerformer((Provider) getRandom(cashierProviders));
 				cardUsagesDao.chargeMoney(usage);
 			} else {
+				//Charge Service
 				usage.setMoney((random.nextDouble() + 0.1d) * -MONEY_LAMBDA); // -3.1
 																				// min,
 																				// max
 																				// -0.1
 				usage.setPerformer((Provider) getRandom(serviceProviders));
 				cardUsagesDao.chargeService(usage);
+				Long travelsCount = travels.get(usage.getCard());
+				if(travelsCount == null){
+					travelsCount = Long.valueOf(1l);
+				}else{
+					travelsCount++;
+				}
+				travels.put(usage.getCard(), travelsCount);
 			}
 			Double totalMoney = usages.get(usage.getPerformer());
 			if (totalMoney == null) {
-				usages.put(usage.getPerformer(), usage.getMoney());
+				usages.put(usage.getPerformer(), Math.abs(usage.getMoney()));
 			} else {
-				totalMoney += usage.getMoney();
+				totalMoney += Math.abs(usage.getMoney());
 				usages.put(usage.getPerformer(), totalMoney);
 			}
+			registerMoneyExpended(usage);
 		}
+	}
+	
+	private void registerMoneyExpended(SubeCardUsage usage){
+		Double totalExpended = expended.get(usage.getCard());
+		if(totalExpended == null){
+			totalExpended = Double.valueOf(usage.getMoney());
+		}else{
+			totalExpended = totalExpended + usage.getMoney();
+		}
+		expended.put(usage.getCard(), totalExpended);
 	}
 
 	private void generateRefunds() throws InvalidSubeCardException,
@@ -253,11 +301,12 @@ public class StatisticDaoTest extends TestCase {
 			}
 			Double totalRefunds = refunds.get(usage.getPerformer());
 			if (totalRefunds == null) {
-				refunds.put(usage.getPerformer(), usage.getMoney());
+				refunds.put(usage.getPerformer(), Math.abs(usage.getMoney()));
 			} else {
-				totalRefunds += usage.getMoney();
+				totalRefunds += Math.abs(usage.getMoney());
 				refunds.put(usage.getPerformer(), totalRefunds);
 			}
+			registerMoneyExpended(usage);
 		}
 	}
 
@@ -309,6 +358,11 @@ public class StatisticDaoTest extends TestCase {
 			cards.add(subeCard);
 		}
 	}
+	
+	private double roundTwoDecimals(double d) {
+    	DecimalFormat twoDForm = new DecimalFormat("#.##");
+    	return Double.valueOf(twoDForm.format(d));
+	}
 
 	private Date getRandomDate(Date from, Date to) {
 		Random random = new Random();
@@ -345,6 +399,8 @@ public class StatisticDaoTest extends TestCase {
 		usages = new HashMap<Provider, Double>();
 		usages1 = new HashMap<Date, Long>();
 		usages2 = new HashMap<Date, Long>();
+		travels = new HashMap<SubeCard, Long>();
+		expended = new HashMap<SubeCard, Double>();
 	}
 
 	public void setCardMongoDao(CardDao cardMongoDao) {

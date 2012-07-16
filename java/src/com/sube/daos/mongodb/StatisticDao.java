@@ -24,8 +24,8 @@ import com.sube.beans.SubeCard;
 
 public interface StatisticDao {
 	public List<Entry<Date,Long>> getUsagesByDates(Date from, Date to);
-	public List<SubeCard> getMostTravelers(int limit);
-	public List<SubeCard> getMostExpenders(int limit);
-	public List<Provider> getMostProfitable(int limit);
-	public List<Provider> getMoreErrorProne(int limit);
+	public List<Entry<SubeCard, Long>> getMostTravelers(int limit);
+	public List<Entry<SubeCard, Double>> getMostExpenders(int limit);
+	public List<Entry<Provider, Double>> getMostProfitable(int limit);
+	public List<Entry<Provider, Double>> getMoreErrorProne(int limit);
 }

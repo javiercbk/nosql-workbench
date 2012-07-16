@@ -14,5 +14,5 @@
  * limitations under the License.
  ******************************************************************************/
 function() {
-	emit(this.subeCard,{money:this.money});
+	emit(this.subeCard,this.money);
 };

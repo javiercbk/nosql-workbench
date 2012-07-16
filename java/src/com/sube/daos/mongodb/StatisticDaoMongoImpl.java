@@ -65,46 +65,48 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 	}
 
 	@Override
-	public List<SubeCard> getMostTravelers(int limit) {
+	public List<Entry<SubeCard, Long>> getMostTravelers(int limit) {
 		MapReduce mapReduce = null;
 		try {
 			mapReduce = mostTravelersMapReduce.generateMapReduce();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ArrayList<SubeCard>();
+			return new ArrayList<Entry<SubeCard, Long>>();
 		}
-		executeMapReduce(mapReduce, null, MongoCollection.MostTravelers);
-		DBCursor dbCursor = getMostTravelerCollection().find().sort(new BasicDBObject("_id", 1)).limit(limit);
-		return parseSubeCardResult(dbCursor);
+		DBObject[] andServiceNegativeArray = {new BasicDBObject("provider.type", ProviderType.ServiceProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))}; 
+		DBObject query = new BasicDBObject("$and", andServiceNegativeArray);
+		executeMapReduce(mapReduce, query, MongoCollection.MostTravelers);
+		DBCursor dbCursor = getMostTravelerCollection().find().sort(new BasicDBObject("value", -1)).limit(limit);
+		return parseSubeCardCount(dbCursor);
 	}
 
 	@Override
-	public List<SubeCard> getMostExpenders(int limit) {
+	public List<Entry<SubeCard, Double>> getMostExpenders(int limit) {
 		MapReduce mapReduce = null;
 		try {
 			mapReduce = mostExpendersMapReduce.generateMapReduce();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ArrayList<SubeCard>();
+			return new ArrayList<Entry<SubeCard, Double>>();
 		}
 		executeMapReduce(mapReduce, null, MongoCollection.MostExpenders);
 		DBCursor dbCursor = getMostExpendersCollection().find().sort(new BasicDBObject("value", -1)).limit(limit);
-		return parseSubeCardResult(dbCursor);
+		return parseSubeCardMoney(dbCursor);
 	}
 
 	@Override
-	public List<Provider> getMostProfitable(int limit) {
+	public List<Entry<Provider, Double>> getMostProfitable(int limit) {
 		MapReduce mapReduce = null;
 		try {
 			mapReduce = mostProfitableMapReduce.generateMapReduce();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ArrayList<Provider>();
+			return new ArrayList<Entry<Provider, Double>>();
 		}
 		DBObject[] andCashierPositiveArray = {new BasicDBObject("provider.type", ProviderType.CashierProvider.name()), new BasicDBObject("money", new BasicDBObject("$gt", 0))};
 		DBObject andCashierPositive = new BasicDBObject("$and", andCashierPositiveArray);
-		DBObject[] andServicePositiveArray = {new BasicDBObject("provider.type", ProviderType.ServiceProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))}; 
-		DBObject andServiceNegative = new BasicDBObject("$and", andServicePositiveArray);
+		DBObject[] andServiceNegativeArray = {new BasicDBObject("provider.type", ProviderType.ServiceProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))}; 
+		DBObject andServiceNegative = new BasicDBObject("$and", andServiceNegativeArray);
 		DBObject[] orQuery = {andCashierPositive, andServiceNegative};
 		DBObject query = new BasicDBObject("$or", orQuery);
 		executeMapReduce(mapReduce, query, MongoCollection.MostProfitable);
@@ -113,13 +115,13 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 	}
 
 	@Override
-	public List<Provider> getMoreErrorProne(int limit) {
+	public List<Entry<Provider, Double>> getMoreErrorProne(int limit) {
 		MapReduce mapReduce = null;
 		try {
 			mapReduce = errorProneMapReduce.generateMapReduce();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ArrayList<Provider>();
+			return new ArrayList<Entry<Provider, Double>>();
 		}
 		DBObject[] andCashierNegativeArray = {new BasicDBObject("provider.type", ProviderType.CashierProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))};
 		DBObject andCashierNegative = new BasicDBObject("$and", andCashierNegativeArray);
@@ -150,22 +152,35 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 		return usagesByDates;
 	}
 	
-	private List<SubeCard> parseSubeCardResult(DBCursor dbCursor) {
-		List<SubeCard> subeCardResults = new ArrayList<SubeCard>(); 
+	private List<Entry<SubeCard, Long>> parseSubeCardCount(DBCursor dbCursor) {
+		List<Entry<SubeCard, Long>> subeCardResults = new ArrayList<Entry<SubeCard, Long>>(); 
 		while(dbCursor.hasNext()){
 			DBObject next = dbCursor.next();
 			DBRef subeCardRef= (DBRef) (next.get("_id"));
-			subeCardResults.add(subeCardParser.parse(subeCardRef.fetch()));
+			Long usages = ((Double) next.get("value")).longValue();
+			subeCardResults.add(new SimpleEntry<SubeCard,Long>(subeCardParser.parse(subeCardRef.fetch()), usages));
 		}
 		return subeCardResults;
 	}
 	
-	private List<Provider> parseProviderResult(DBCursor dbCursor) {
-		List<Provider> providersResults = new ArrayList<Provider>(); 
+	private List<Entry<SubeCard, Double>> parseSubeCardMoney(DBCursor dbCursor) {
+		List<Entry<SubeCard, Double>> subeCardResults = new ArrayList<Entry<SubeCard, Double>>(); 
+		while(dbCursor.hasNext()){
+			DBObject next = dbCursor.next();
+			DBRef subeCardRef= (DBRef) (next.get("_id"));
+			Double usages = (Double) next.get("value");
+			subeCardResults.add(new SimpleEntry<SubeCard,Double>(subeCardParser.parse(subeCardRef.fetch()), usages));
+		}
+		return subeCardResults;
+	}
+	
+	private List<Entry<Provider, Double>> parseProviderResult(DBCursor dbCursor) {
+		List<Entry<Provider, Double>> providersResults = new ArrayList<Entry<Provider, Double>>(); 
 		while(dbCursor.hasNext()){
 			DBObject next = dbCursor.next();
 			DBRef providerRef= (DBRef) (next.get("_id"));
-			providersResults.add(providerParser.parse(providerRef.fetch()));
+			Double usages = (Double) next.get("value");
+			providersResults.add(new SimpleEntry<Provider,Double>(providerParser.parse(providerRef.fetch()),usages));
 		}
 		return providersResults;
 	}
