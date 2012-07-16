@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.sube.daos.mongodb.generators;
 
-import org.bson.types.ObjectId;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.sube.beans.DataEntry;

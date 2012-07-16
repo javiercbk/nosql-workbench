@@ -16,8 +16,6 @@
 package com.sube.daos.mongodb.generators;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
 import com.sube.beans.Provider;

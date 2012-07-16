@@ -32,6 +32,12 @@
 	
 	<bean id="subeCardValidator" class="com.sube.daos.mongodb.SubeCardValidatorImpl"/>
 	
+	<bean id="queryReader" class="com.sube.utils.MongoQueryReader"/>
+	
+	<bean id="genericMapReduceGenerator" class="com.sube.daos.mongodb.mapreduce.MapReduceGenerator">
+		<property name="queryReader" ref="queryReader"/>
+	</bean>
+	
 	<!-- DAOS -->
 	<bean id="genericDao" abstract="true">
 		<property name="db" ref="db"/>
@@ -62,6 +68,36 @@
 	<bean id="statisticDao" class="com.sube.daos.mongodb.StatisticDaoMongoImpl" parent="genericDao">
 		<property name="subeCardParser" ref="subeCardParser"/>
 		<property name="providerParser" ref="providerParser"/>
+		<property name="usagesByDatesMapReduce">
+			<bean parent="genericMapReduceGenerator">
+				<property name="mapResource" value="/com/sube/resources/mongodb/mapreduce/usagesDatesMap.js"/>
+				<property name="reduceResource" value="/com/sube/resources/mongodb/mapreduce/usagesDatesReduce.js"/>
+			</bean>
+		</property>
+		<property name="mostTravelersMapReduce">
+			<bean parent="genericMapReduceGenerator">
+				<property name="mapResource" value="/com/sube/resources/mongodb/mapreduce/mostTravelersMap.js"/>
+				<property name="reduceResource" value="/com/sube/resources/mongodb/mapreduce/mostTravelersReduce.js"/>
+			</bean>
+		</property>
+		<property name="mostExpendersMapReduce">
+			<bean parent="genericMapReduceGenerator">
+				<property name="mapResource" value="/com/sube/resources/mongodb/mapreduce/mostExpendersMap.js"/>
+				<property name="reduceResource" value="/com/sube/resources/mongodb/mapreduce/mostExpendersReduce.js"/>
+			</bean>
+		</property>
+		<property name="mostProfitableMapReduce">
+			<bean parent="genericMapReduceGenerator">
+				<property name="mapResource" value="/com/sube/resources/mongodb/mapreduce/moreProfitableMap.js"/>
+				<property name="reduceResource" value="/com/sube/resources/mongodb/mapreduce/moreProfitableReduce.js"/>
+			</bean>
+		</property>
+		<property name="errorProneMapReduce">
+			<bean parent="genericMapReduceGenerator">
+				<property name="mapResource" value="/com/sube/resources/mongodb/mapreduce/errorProneMap.js"/>
+				<property name="reduceResource" value="/com/sube/resources/mongodb/mapreduce/errorProneReduce.js"/>
+			</bean>
+		</property>
 	</bean>
 
 </beans>

@@ -15,13 +15,12 @@
  ******************************************************************************/
 package com.sube.daos.mongodb;
 
+import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -35,126 +34,109 @@ import com.sube.beans.MongoCollection;
 import com.sube.beans.Provider;
 import com.sube.beans.ProviderType;
 import com.sube.beans.SubeCard;
+import com.sube.daos.mongodb.mapreduce.MapReduce;
+import com.sube.daos.mongodb.mapreduce.MapReduceGenerator;
 import com.sube.daos.mongodb.parsers.DBObjectParser;
 
 public class StatisticDaoMongoImpl implements StatisticDao {
 	private DB db;
 	private DBObjectParser<SubeCard> subeCardParser;
 	private DBObjectParser<Provider> providerParser;
+	private MapReduceGenerator usagesByDatesMapReduce;
+	private MapReduceGenerator mostTravelersMapReduce;
+	private MapReduceGenerator mostExpendersMapReduce;
+	private MapReduceGenerator mostProfitableMapReduce;
+	private MapReduceGenerator errorProneMapReduce;
+
 
 	@Override
 	public List<Entry<Date,Long>> getUsagesByDates(Date from, Date to) {
-		StringBuffer map = new StringBuffer("function() {");
-		map.append("emit(this.datetime,{count:1});");
-		map.append("}");
-		StringBuffer reduce = new StringBuffer("function(key, values) {");
-		reduce.append("var result = 0");
-		reduce.append("values.forEach(function(value) {");
-		reduce.append("result += value.count;");
-		reduce.append("});");
-		reduce.append("return result;");
-		reduce.append("}");
+		MapReduce mapReduce = null;
+		try {
+			mapReduce = usagesByDatesMapReduce.generateMapReduce();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<Entry<Date,Long>>();
+		}
 		DBObject query = new BasicDBObject("datetime", new BasicDBObject("$gte", from).append("$lte",to));
-		MapReduceCommand mapReduce = new MapReduceCommand(
-				getCardUsagesCollection(), map.toString(), reduce.toString(),
-				MongoCollection.UsagesByDates.name, OutputType.REPLACE, query);
-		getCardUsagesCollection().mapReduce(mapReduce);
+		executeMapReduce(mapReduce, query, MongoCollection.UsagesByDates);
 		DBCursor dbCursor = getUsagesByDateCollection().find().sort(new BasicDBObject("_id", 1));
 		return parseUsagesByDatesResult(dbCursor);
 	}
 
 	@Override
 	public List<SubeCard> getMostTravelers(int limit) {
-		StringBuffer map = new StringBuffer("function() {");
-		map.append("emit(this.subeCard,{count:1});");
-		map.append("}");
-		StringBuffer reduce = new StringBuffer("function(key, values) {");
-		reduce.append("var result = 0");
-		reduce.append("values.forEach(function(value) {");
-		reduce.append("result += value.count;");
-		reduce.append("});");
-		reduce.append("return result;");
-		reduce.append("}");
-		MapReduceCommand mapReduce = new MapReduceCommand(
-				getCardUsagesCollection(), map.toString(), reduce.toString(),
-				MongoCollection.MostTravelers.name, OutputType.REPLACE, null);
-		getCardUsagesCollection().mapReduce(mapReduce);
+		MapReduce mapReduce = null;
+		try {
+			mapReduce = mostTravelersMapReduce.generateMapReduce();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<SubeCard>();
+		}
+		executeMapReduce(mapReduce, null, MongoCollection.MostTravelers);
 		DBCursor dbCursor = getMostTravelerCollection().find().sort(new BasicDBObject("_id", 1)).limit(limit);
 		return parseSubeCardResult(dbCursor);
 	}
 
 	@Override
 	public List<SubeCard> getMostExpenders(int limit) {
-		StringBuffer map = new StringBuffer("function() {");
-		map.append("emit(this.subeCard,{money:this.money});");
-		map.append("}");
-		StringBuffer reduce = new StringBuffer("function(key, values) {");
-		reduce.append("var result = 0");
-		reduce.append("values.forEach(function(value) {");
-		reduce.append("result += value.money;");
-		reduce.append("});");
-		reduce.append("return result;");
-		reduce.append("}");
-		MapReduceCommand mapReduce = new MapReduceCommand(
-				getCardUsagesCollection(), map.toString(), reduce.toString(),
-				MongoCollection.MostExpenders.name, OutputType.REPLACE, null);
-		getCardUsagesCollection().mapReduce(mapReduce);
+		MapReduce mapReduce = null;
+		try {
+			mapReduce = mostExpendersMapReduce.generateMapReduce();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<SubeCard>();
+		}
+		executeMapReduce(mapReduce, null, MongoCollection.MostExpenders);
 		DBCursor dbCursor = getMostExpendersCollection().find().sort(new BasicDBObject("value", -1)).limit(limit);
 		return parseSubeCardResult(dbCursor);
 	}
 
 	@Override
 	public List<Provider> getMostProfitable(int limit) {
-		StringBuffer map = new StringBuffer("function() {");
-		map.append("emit(this.provider.ref,{money:this.money});");
-		map.append("}");
-		StringBuffer reduce = new StringBuffer("function(key, values) {");
-		reduce.append("var result = 0;");
-		reduce.append("values.forEach(function(value) {");
-		reduce.append("result += value.money;");
-		reduce.append("});");
-		reduce.append("return result;");
-		reduce.append("}");
-		BasicDBObject cashierPositive = new BasicDBObject("provider.type", ProviderType.CashierProvider.name());
-		cashierPositive.append("money", new BasicDBObject("$gt", 0));
-		DBObject andCashierPositive = new BasicDBObject("$and", cashierPositive);
-		BasicDBObject serviceNegative = new BasicDBObject("provider.type", ProviderType.ServiceProvider.name());
-		serviceNegative.append("money", new BasicDBObject("$lt", 0));
-		DBObject andServiceNegative = new BasicDBObject("$and", serviceNegative);
-		DBObject query = new BasicDBObject().append("$or", andCashierPositive).append("$or", andServiceNegative);
-		MapReduceCommand mapReduce = new MapReduceCommand(
-				getCardUsagesCollection(), map.toString(), reduce.toString(),
-				MongoCollection.MostProfitable.name, OutputType.REPLACE, query);
-		getCardUsagesCollection().mapReduce(mapReduce);
+		MapReduce mapReduce = null;
+		try {
+			mapReduce = mostProfitableMapReduce.generateMapReduce();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<Provider>();
+		}
+		DBObject[] andCashierPositiveArray = {new BasicDBObject("provider.type", ProviderType.CashierProvider.name()), new BasicDBObject("money", new BasicDBObject("$gt", 0))};
+		DBObject andCashierPositive = new BasicDBObject("$and", andCashierPositiveArray);
+		DBObject[] andServicePositiveArray = {new BasicDBObject("provider.type", ProviderType.ServiceProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))}; 
+		DBObject andServiceNegative = new BasicDBObject("$and", andServicePositiveArray);
+		DBObject[] orQuery = {andCashierPositive, andServiceNegative};
+		DBObject query = new BasicDBObject("$or", orQuery);
+		executeMapReduce(mapReduce, query, MongoCollection.MostProfitable);
 		DBCursor dbCursor = getMostProfitableCollection().find().sort(new BasicDBObject("value", -1)).limit(limit);
 		return parseProviderResult(dbCursor);
 	}
 
 	@Override
 	public List<Provider> getMoreErrorProne(int limit) {
-		StringBuffer map = new StringBuffer("function() {");
-		map.append("emit(this.provider.ref,{money:this.money});");
-		map.append("}");
-		StringBuffer reduce = new StringBuffer("function(key, values) {");
-		reduce.append("var result = 0;");
-		reduce.append("values.forEach(function(value) {");
-		reduce.append("result += value.money;");
-		reduce.append("});");
-		reduce.append("return result;");
-		reduce.append("}");
-		DBObject[] andCashierPositiveArray = {new BasicDBObject("provider.type", ProviderType.CashierProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))};
-		DBObject andCashierPositive = new BasicDBObject("$and", andCashierPositiveArray);
-		DBObject[] andServiceNegativeArray = {new BasicDBObject("provider.type", ProviderType.ServiceProvider.name()), new BasicDBObject("money", new BasicDBObject("$gt", 0))}; 
-		DBObject andServiceNegative = new BasicDBObject("$and", andServiceNegativeArray);
-		DBObject[] orQuery = {andCashierPositive, andServiceNegative};
+		MapReduce mapReduce = null;
+		try {
+			mapReduce = errorProneMapReduce.generateMapReduce();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<Provider>();
+		}
+		DBObject[] andCashierNegativeArray = {new BasicDBObject("provider.type", ProviderType.CashierProvider.name()), new BasicDBObject("money", new BasicDBObject("$lt", 0))};
+		DBObject andCashierNegative = new BasicDBObject("$and", andCashierNegativeArray);
+		DBObject[] andServicePositiveArray = {new BasicDBObject("provider.type", ProviderType.ServiceProvider.name()), new BasicDBObject("money", new BasicDBObject("$gt", 0))}; 
+		DBObject andServicePositive = new BasicDBObject("$and", andServicePositiveArray);
+		DBObject[] orQuery = {andCashierNegative, andServicePositive};
 		DBObject query = new BasicDBObject("$or", orQuery);
-		System.out.println("//query\n"+query.toString());
-		MapReduceCommand mapReduce = new MapReduceCommand(
-				getCardUsagesCollection(), map.toString(), reduce.toString(),
-				MongoCollection.MoreErrorProne.name, OutputType.REPLACE, query);
-		getCardUsagesCollection().mapReduce(mapReduce);
+		executeMapReduce(mapReduce, query, MongoCollection.MoreErrorProne);
 		DBCursor dbCursor = getMoreErrorProneCollection().find().sort(new BasicDBObject("value", -1)).limit(limit);
 		return parseProviderResult(dbCursor);
+	}
+	
+	private void executeMapReduce(MapReduce mapReduce, DBObject query, MongoCollection mongoCollection){
+		MapReduceCommand mapReduceCommand = new MapReduceCommand(
+				getCardUsagesCollection(), mapReduce.getMapExpression(), mapReduce.getReduceExpression(),
+				mongoCollection.name, OutputType.REPLACE, query);
+		getCardUsagesCollection().mapReduce(mapReduceCommand);
 	}
 	
 	private List<Entry<Date,Long>> parseUsagesByDatesResult(DBCursor dbCursor) {
@@ -222,5 +204,26 @@ public class StatisticDaoMongoImpl implements StatisticDao {
 	
 	public void setProviderParser(DBObjectParser<Provider> providerParser) {
 		this.providerParser = providerParser;
+	}
+
+	public void setUsagesByDatesMapReduce(MapReduceGenerator usagesByDatesMapReduce) {
+		this.usagesByDatesMapReduce = usagesByDatesMapReduce;
+	}
+
+	public void setMostTravelersMapReduce(MapReduceGenerator mostTravelersMapReduce) {
+		this.mostTravelersMapReduce = mostTravelersMapReduce;
+	}
+
+	public void setMostExpendersMapReduce(MapReduceGenerator mostExpendersMapReduce) {
+		this.mostExpendersMapReduce = mostExpendersMapReduce;
+	}
+
+	public void setMostProfitableMapReduce(
+			MapReduceGenerator mostProfitableMapReduce) {
+		this.mostProfitableMapReduce = mostProfitableMapReduce;
+	}
+
+	public void setErrorProneMapReduce(MapReduceGenerator errorProneMapReduce) {
+		this.errorProneMapReduce = errorProneMapReduce;
 	}
 }

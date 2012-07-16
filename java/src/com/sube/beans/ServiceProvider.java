@@ -17,11 +17,10 @@ package com.sube.beans;
 
 import org.bson.types.ObjectId;
 
-public class ServiceProvider implements Provider{
+public class ServiceProvider extends AbstractProvider{
 	private String providerName;
 	private String location;
 	private Long id;
-	private LegalPerson legalPerson;
 	private ObjectId mongoId;
 	private final ProviderType providerType = ProviderType.ServiceProvider;
 	
@@ -59,4 +58,5 @@ public class ServiceProvider implements Provider{
 	public void setMongoId(ObjectId mongoId) {
 		this.mongoId = mongoId;
 	}
+	
 }

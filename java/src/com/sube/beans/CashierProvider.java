@@ -17,13 +17,12 @@ package com.sube.beans;
 
 import org.bson.types.ObjectId;
 
-public class CashierProvider implements Provider{
+public class CashierProvider extends AbstractProvider{
 	private String cashierName;
 	private String location;
 	private Long id;
-	private LegalPerson legalPerson;
-	private final ProviderType providerType = ProviderType.CashierProvider;
 	private ObjectId mongoId;
+	private final ProviderType providerType = ProviderType.CashierProvider;
 	
 	public String getCashierName() {
 		return cashierName;
