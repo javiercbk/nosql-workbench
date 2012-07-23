@@ -1,0 +1,27 @@
+default:
+  mongo:
+    port: 27017               # mongo server port
+    host: '127.0.0.1'         # mongo host
+    password: ''              # to use with AUTH
+    db: 'sube'                # the sube db
+    options: {auto_reconnect: true, native_parser: true}
+  resources:
+    dir: '/Users/javier/Documents/workspace/sube/nodejs/resources/'
+test:
+  mongo:
+    port: 27017               # mongo server port
+    host: '127.0.0.1'         # mongo host
+    password: ''              # to use with AUTH
+    db: 'sube'                # the sube db
+    options: {auto_reconnect: true, native_parser: true}
+  resources:
+    dir: '/Users/javier/Documents/workspace/sube/nodejs/resources/'
+production:
+  mongo:
+    port: 27017               # mongo server port
+    host: '127.0.0.1'         # mongo host
+    password: ''              # to use with AUTH
+    db: 'sube'                # the sube db
+    options: {auto_reconnect: true, native_parser: true}
+  resources:
+    dir: '/var/opt/www/sube/resources/'

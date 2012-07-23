@@ -1,0 +1,30 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.loginBox {
+    background-color: grey;
+    width: 300px;
+    height: 100px;
+}
+
+.indexContainer {
+    margin: 0 auto 0 auto;
+}
+
+.loginProperty {
+    font-weight: bold;
+    float: left;
+}
+
+.loginInput {
+    float: right;
+}
+
+.loginLittleBox {
+    display: block;
+    float: left;
+    clear: both;
+    width: 100%;
+}

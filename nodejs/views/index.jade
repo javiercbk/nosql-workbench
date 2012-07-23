@@ -1,0 +1,29 @@
+doctype 5
+html
+	head
+		title SUBE
+		script(type='text/javascript',src='http://code.jquery.com/jquery-1.7.2.min.js')
+		link(href='stylesheets/style.css', rel='stylesheet', type='text/css', media='screen')
+	body
+		h1 SUBE
+		div.indexContainer
+			div.loginBox
+				form(method='POST', action='login')
+					div.loginLittleBox
+						span.loginProperty=__i('idNumber')
+						span.loginInput
+							input(type='text', name='idNumber')
+					div.loginLittleBox
+						span.loginProperty=__i('documentType')
+						span.loginInput
+							select(name='documentType')
+								option(value='DNI', selected) DNI
+								option(value='LE') LE
+								option(value='PASS') PASSPORT
+					div.loginLittleBox
+						span.loginProperty=__i('password')
+						span.loginInput
+							input(type='password', name='password')
+					div.loginLittleBox
+						span
+							input(type='submit', value=__i('login'))
