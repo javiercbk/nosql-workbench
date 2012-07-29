@@ -4,6 +4,34 @@ var mongoose = require('../node_modules/mongoose')
 , mongodb = require('../node_modules/mongodb');
 var db = mongoose.connect('mongodb://localhost/sube');
 
+var Counters = new Schema({
+  _id:String, // the schema name
+  count: Number
+});
+
+Counters.statics.findAndModify = function (query, sort, doc, options, callback) {
+    return this.collection.findAndModify(query, sort, doc, options, callback);
+};
+
+var Counter = mongoose.model('Counter', Counters);
+
+/**
+ * Increments the counter associated with the given schema name.
+ * @param {string} schemaName The name of the schema for which to
+ *   increment the associated counter.
+ * @param {function(err, count)} The callback called with the updated
+ *   count (a Number).
+ */
+function incrementCounter(schemaName, callback){
+  Counter.findAndModify({ _id: schemaName }, [],
+    { $inc: { amount: 1 } }, {"new":true, upsert:true}, function (err, result) {
+      if (err)
+        callback(err);
+      else
+        callback(null, result.amount);
+  });
+}
+
 var dataEntry = new Schema({
   physicalPerson: {firstName: {type: String, required: true, index: true},
 		   lastName: {type: String, required: true, index: true},
@@ -12,7 +40,9 @@ var dataEntry = new Schema({
   password: {type: String, required: true}
 });
 
-mongoose.model('DataEntry', dataEntry);
+dataEntry.methods.findByCredentials = function (callback) {
+  return this.model('DataEntry').find({password: this.password, "physicalPerson.idNumber": this.physicalPerson.idNumber,  "physicalPerson.documentType": this.physicalPerson.documentType}, callback);
+}
 
 var provider = new Schema({
   location: {type: String, required: true, index: true},
@@ -24,8 +54,6 @@ var provider = new Schema({
 		legalLocation: {type: String, required: true}}
 });
 
-mongoose.model('Provider', provider);
-
 var subeCard = new Schema({
   balance: {type: Number, required: true, default: 0},
   number: {type: Number, required: true, index: {unique: true}},
@@ -33,21 +61,28 @@ var subeCard = new Schema({
 	 lastName: {type: String, required: true, index: true},
 	 idNumber: {type: Number, required: true, index: true},
 	 documentType: {type: String, required: true}},
-  dataEntry: {type: Schema.ObjectId, required: true}
+  dataEntry: {type: Schema.ObjectId, ref: 'dataEntries', required: true}
 });
 
-mongoose.model('SubeCard', subeCard);
+subeCard.methods.create = function (callback) {
+  var subeCard = this;
+  var incrementCallback = function(err, newNumber) {
+    if(!err){
+      subeCard.number = newNumber;
+      subeCard.save(callback);
+    }
+  };
+  incrementCounter('subeCards', incrementCallback);
+}
 
 var subeCardUsage = new Schema({
-  subeCard: {type: Schema.ObjectId, required: true, index: true},
-  provider: {type: Schema.ObjectId, required: true, index: true},
+  subeCard: {type: Schema.ObjectId, ref: 'subeCards', required: true, index: true},
+  provider: {type: Schema.ObjectId, ref: 'providers', required: true, index: true},
   datetime: {type: Date, required: true, index: true},
   money: {type: Number, required: true},
 });
 
-mongoose.model('SubeCardUsage', subeCardUsage);
-
-exports.SubeCard = mongoose.model('SubeCard');
-exports.SubeCardUsage = mongoose.model('SubeCardUsage');
-exports.DataEntry = mongoose.model('DataEntry');
-exports.Provider = mongoose.model('Provider');
+exports.SubeCard = mongoose.model('SubeCard', subeCard, 'subeCards');
+exports.SubeCardUsage = mongoose.model('SubeCardUsage', subeCardUsage, 'subeCardUsages');
+exports.DataEntry = mongoose.model('DataEntry', dataEntry, 'dataEntries');
+exports.Provider = mongoose.model('Provider', provider, 'providers');

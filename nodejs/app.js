@@ -2,7 +2,7 @@ var express = require('express')
 , routes = require('./routes')
 , config = require('yaml-config')
 //gzip static responses
-, gzippo = require('gzippo')
+//, gzippo = require('gzippo')
 //yaml config
 , config = require('yaml-config')
 //internationalization
@@ -32,18 +32,18 @@ app.configure(function(){
   app.use(i18n.init);
   app.use(app.router);
   //Replace the default connect or express static provider with gzippo's
-  //app.use(express.static(__dirname + '/public'));
-  app.use(gzippo.staticGzip(__dirname + '/public'));
-  //    app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public'));
+  //app.use(gzippo.staticGzip(__dirname + '/public'));
 });
 
-app.helpers({
+app.locals({
   __i: i18n.__,
   __n: i18n.__n
 });
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  app.set('view options', { pretty: true });
 });
 
 app.configure('production', function(){
@@ -52,7 +52,7 @@ app.configure('production', function(){
 
 //DataEntry Authorization check
 function checkAuth(req, res, next) {
-  if (!req.session.user_id) {
+  if (!req.session.user) {
     res.send('You are not authorized to view this page');
   } else {
     next();
@@ -61,7 +61,7 @@ function checkAuth(req, res, next) {
 
 //user Authorization check
 function checkUserAuth(req, res, next) {
-  if (!req.session.card_id) {
+  if (!req.session.card) {
     res.send('You are not authorized to view this page');
   } else {
     next();
@@ -83,25 +83,39 @@ app.post('/login', routes.login);
 
 app.get('/logout', routes.logout);
 
+/* WARNING: ONLY FOR TESTING*/
+
+app.get('/dataEntry', routes.getDataEntry);
+
+app.get('/dataEntry/:idNumber', routes.getDataEntry);
+
+app.post('/dataEntry', routes.postDataEntry);
+
+app.post('/updateDataEntry', routes.updateDataEntry);
+
+app.post('/deleteDataEntry', routes.deleteDataEntry);
+
+/* END OF WARNING */
+
 app.get('/home', checkAuth, routes.home);
 
-app.get('/profile', checkAuth, routes.profile);
+app.get('/profile', checkAuth, routes.getProfile);
 
-app.get('/newCard', checkAuth, routes.newSubeCard);
+app.post('/createSubeCard', checkAuth, routes.postSubeCard);
 
-app.get('/newProvider', checkAuth, routes.newProvider);
+app.post('/createProvider', checkAuth, routes.postProvider);
 
 app.get('/getProvider/:idProv', checkAuth, routes.getProvider);
 
-app.get('/getSubeCard/:numCard', checkAuth, routes.getSubeCard);
+app.get('/subeCard/:numCard', checkAuth, routes.getSubeCard);
 
-app.post('/updateProfile', checkAuth, routes.updateProfile);
+app.post('/profile', checkAuth, routes.updateProfile);
 
-app.post('/uploadPicture', checkAuth, routes.uploadPicture);
+app.post('/picture', checkAuth, routes.uploadPicture);
 
-app.post('/inputProvider', checkAuth, routes.inputProvider);
+app.get('/provider', checkAuth, routes.getProvider);
 
-app.post('/inputSubeCard', checkAuth, routes.inputSubeCard);
+app.get('/subeCard', checkAuth, routes.getSubeCard);
 
 /* User routes */
 //TODO user everyauth to authenticate user
@@ -113,5 +127,5 @@ app.post('/submitComplain', checkUserAuth, routes.submitComplain);
 
 
 app.listen(3000, function(){
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+  console.log("Express server listening on port %d in %s mode", 3000, app.settings.env);
 });

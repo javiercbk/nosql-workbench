@@ -27,3 +27,5 @@ html
 					div.loginLittleBox
 						span
 							input(type='submit', value=__i('login'))
+						if(error)
+							span.loginError=__i('badCredentials')
